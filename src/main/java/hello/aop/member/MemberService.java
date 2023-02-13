@@ -1,5 +1,5 @@
 package hello.aop.member;
 
-public interface MemberSevice {
+public interface MemberService {
     String hello(String param);
 }
