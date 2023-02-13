@@ -12,11 +12,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 스프링 Aop - 포인트 컷 다양한 범위 지정
- * public java.lang.String hello.aop.member.MemberServiceImpl.hello(java.lang.String)
  * "execution(* hello.proxy.app..*(..))"
- * 접근제어자, 반환타입, 선언타입, 메서드이름, 파라미터
- * 생략   -   * -hello~app..-   *   - (..)
- * 필수              필수      필수
+ * public / java.lang.String / hello.aop.member.MemberServiceImpl / .hello / (java.lang.String)
+ * 접근제어자, 반환타입(필수), 선언타입, 메서드이름(필수), 파라미터(필수)
+ * 생략   -       *    -hello~app..-   *     - (..)
  */
 @Slf4j
 public class ExecutionTest {
@@ -115,6 +114,93 @@ public class ExecutionTest {
     @Test
     void packageMatchSubPackage2() {
         pointcut.setExpression("execution(* hello.aop..*.*(..))");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
+    }
+
+    /**
+     * 타입 매칭 - 부모 타입 허용
+     * SuperType(): 부모 타입으로 선언 -> 매칭 가능!
+     */
+    @Test
+    void typeExactMatch() {
+        pointcut.setExpression("execution(* hello.aop.member.MemberServiceImpl.*(..))");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
+    }
+
+    @Test
+    void typeMatchSuperType() {
+        pointcut.setExpression("execution(* hello.aop.member.MemberService.*(..))");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
+    }
+
+    /**
+     * 타입 매칭 - 부모 타입에 있는 메서드만 허용
+     * 부모 타입으로 매칭하는데 자식 타입에 있는 다른 메서드도 매칭이 될까? A: NO! 부모 타입에 선언된 메서드만 매칭이 됨!!(isFalse)
+     * 즉, 자식 타입으로 매칭(execution) & 자식 타입 메서드 매칭!
+     */
+    @Test
+    void typeMatchInternal() throws NoSuchMethodException {
+        pointcut.setExpression("execution(* hello.aop.member.MemberServiceImpl.*(..))");
+        Method internalMethod = MemberServiceImpl.class.getMethod("internal", String.class);
+        assertThat(pointcut.matches(internalMethod, MemberServiceImpl.class)).isTrue();
+    }
+
+    @Test
+    void typeMatchNoSuperTypeMethodFalse() throws NoSuchMethodException {
+        pointcut.setExpression("execution(* hello.aop.member.MemberService.*(..))");
+        Method internalMethod = MemberServiceImpl.class.getMethod("internal", String.class);
+        assertThat(pointcut.matches(internalMethod, MemberServiceImpl.class)).isFalse();
+    }
+
+    /**
+     * 파라미터 매칭
+     * String 타입의 파라미터 허용
+     * <반환타입 메서드이름(String)>
+     */
+    @Test
+    void argsMatch() {
+        pointcut.setExpression("execution(* *(String))");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
+    }
+
+    /**
+     * 파라미터가 없어야 함
+     * ()
+     */
+    @Test
+    void argsMatchNoArgs() {
+        pointcut.setExpression("execution(* *())");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isFalse();
+    }
+
+    /**
+     * 정확히 하나의 파라미터 허용, 모든 타입 허용
+     * (Xxx)
+     */
+    @Test
+    void argsMatchStar() {
+        pointcut.setExpression("execution(* *(*))");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
+    }
+
+    /**
+     * 숫자와 무관하게 모든 파라미터, 모든 타입 허용
+     * 파라미터가 없어도 됨
+     * (), (Xxx), (Xxx, Xxx)
+     */
+    @Test
+    void argsMatchAll() {
+        pointcut.setExpression("execution(* *(..))");
+        assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
+    }
+
+    /**
+     * String 타입으로 시작, 숫자와 무관하게 모든 파라미터, 모든 타입 허용
+     * (String), (String, Xxx), (String, Xxx, Xxx) 허용
+     */
+    @Test
+    void argsMatchComplex() {
+        pointcut.setExpression("execution(* *(String, ..))"); //파라미터 1번: String, 뒤에는 있어도 되고 없어도 되고
         assertThat(pointcut.matches(helloMethod, MemberServiceImpl.class)).isTrue();
     }
 
