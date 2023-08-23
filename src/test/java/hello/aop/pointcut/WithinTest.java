@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * within: 특정 타입 내의 조인 포인트에 대한 매칭을 제한
- * execution에서 type 부분만 사용
+ * execution의 type 부분만 사용
  * <p>
  * 주의: 표현식에 부모 타입을 지정하면 안됨! 정확하게 타입이 맞아야함
  */
