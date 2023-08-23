@@ -45,7 +45,8 @@ public class ExecutionTest {
     }
 
     /**
-     * 가장 많이 생략한 포인트 컷: 반환타입: *, 메서드 이름: *, 파라미터: (..)
+     * 가장 많이 생략한 포인트 컷: *(반환타입), *(메서드 이름), (..)(파라미터)
+     * 필수 값: 반환타입 메서드 이름 파라미터
      */
     @Test
     void allMatch() {
@@ -97,7 +98,13 @@ public class ExecutionTest {
     }
 
     /**
-     * ..: member와 member 하위에 있는 모든 패키지 대상이 됨!
+     * hello.aop.member.*(1).*(2)
+     * (1) : 타입
+     * (2) : 메서드 이름
+     * '.' : 정확하게 해당 위치의 패키지
+     * '..' : 해당 위치의 패키지와 그 하위 패키지도 포함
+     * <p>
+     * packageExactFalse: member 패키지를 지정 안해줘서 isFalse()
      */
     @Test
     void packageExactFalse() {
@@ -135,7 +142,9 @@ public class ExecutionTest {
 
     /**
      * 타입 매칭 - 부모 타입에 있는 메서드만 허용
-     * 부모 타입으로 매칭하는데 자식 타입에 있는 다른 메서드도 매칭이 될까? A: NO! 부모 타입에 선언된 메서드만 매칭이 됨!!(isFalse)
+     * Q. "MemberService" 매칭하는데 MemberServiceImpl에는 있고 MemberService에 없는 internal() 메서드가 매칭 될까?
+     * A. NO! 부모 타입에 선언된 메서드만 매칭이 됨!!(isFalse)
+     * <p>
      * 즉, 자식 타입으로 매칭(execution) & 자식 타입 메서드 매칭!
      */
     @Test
@@ -144,6 +153,10 @@ public class ExecutionTest {
         Method internalMethod = MemberServiceImpl.class.getMethod("internal", String.class);
         assertThat(pointcut.matches(internalMethod, MemberServiceImpl.class)).isTrue();
     }
+
+    /**
+     * MemberService 인터페이스에 있는 hello()만 매칭됨 (isTrue)
+     */
 
     @Test
     void typeMatchNoSuperTypeMethodFalse() throws NoSuchMethodException {
@@ -166,6 +179,7 @@ public class ExecutionTest {
     /**
      * 파라미터가 없어야 함
      * ()
+     * 하지만 String param 있으므로 .isFalse()
      */
     @Test
     void argsMatchNoArgs() {
@@ -197,6 +211,12 @@ public class ExecutionTest {
     /**
      * String 타입으로 시작, 숫자와 무관하게 모든 파라미터, 모든 타입 허용
      * (String), (String, Xxx), (String, Xxx, Xxx) 허용
+     * <p>
+     * (String, *)
+     * 파라미터 개수가 2개인데 처음은 String, 2번째는 아무거나
+     * <p>
+     * (String, ..)
+     * 파라미터 처음은 String, 2번째부터는 있어도 되고 없어도 되고, 개수는 무제한
      */
     @Test
     void argsMatchComplex() {
