@@ -2,6 +2,9 @@ package hello.aop.order.aop;
 
 import org.aspectj.lang.annotation.Pointcut;
 
+/**
+ * 포인트 컷 공용으로 모아서 사용
+ */
 public class Pointcuts {
     //hell.aop.order 패키지와 하위 패키지
 
