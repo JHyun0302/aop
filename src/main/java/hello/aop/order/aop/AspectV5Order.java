@@ -10,6 +10,7 @@ import org.springframework.core.annotation.Order;
  * pointcuts 순서 보장 X
  *
  * @Order로 순서 보장 가능
+ * - 클래스 단위로 @Order() 순서 보장 가능
  */
 
 @Slf4j
