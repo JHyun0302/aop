@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 대안2: 지연 조회 (ObjectProvider(Provider), ApplicationContext)
+ * ApplicationContext - 기능이 너무 많음
+ * ObjectProvider(Provider) - 기능의 제한을 줌
  */
 @Slf4j
 @Component
