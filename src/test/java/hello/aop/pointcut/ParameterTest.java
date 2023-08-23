@@ -58,8 +58,8 @@ public class ParameterTest {
 
         /**
          * 공통: this(obj), target(obj) 에서 obj == MemberService
-         * target: 실제 객체
-         * this: 스프링 컨테이너의 프록시
+         * target: 실제 객체 (프록시가 실행한 실체 대상: MemberServiceImpl)
+         * this: 스프링 컨테이너의 프록시 (CGLIB)
          */
         @Before("allMember() && this(obj)")
         public void thisArgs(JoinPoint joinPoint, MemberService obj) {
@@ -73,6 +73,7 @@ public class ParameterTest {
 
         /**
          * @target, @within: 타입의 애노테이션 전달 받는다
+         * 결과: ClassAop()
          */
         @Before("allMember() && @target(annotation)")
         public void atTarget(JoinPoint joinPoint, ClassAop annotation) {
@@ -86,6 +87,7 @@ public class ParameterTest {
 
         /**
          * @annotation: 메서드의 애노테이션을 전달 받는다
+         * @MethodAop("test value") 값 가져옴
          */
 
         @Before("allMember() && @annotation(annotation)")
