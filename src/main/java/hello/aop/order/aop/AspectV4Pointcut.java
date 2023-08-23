@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
 /**
- * pointcuts 모아놓은 pointcut 사용
+ * pointcut 외부에 모아놓고 패지키명으로 불러서 사용
  */
 
 @Slf4j
