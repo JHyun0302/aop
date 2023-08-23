@@ -50,14 +50,15 @@ public class ArgsTest {
      */
     @Test
     void argsVsExecution() {
-        //Args
+        //Args(부모 타입 허용 O)
         assertThat(pointcut("args(String)")
                 .matches(helloMethod, MemberServiceImpl.class)).isTrue();
         assertThat(pointcut("args(java.io.Serializable)")
                 .matches(helloMethod, MemberServiceImpl.class)).isTrue();
         assertThat(pointcut("args(Object)")
                 .matches(helloMethod, MemberServiceImpl.class)).isTrue();
-        //Execution
+
+        //Execution(부모 타입 허용 X)
         assertThat(pointcut("execution(* *(String))")
                 .matches(helloMethod, MemberServiceImpl.class)).isTrue();
         assertThat(pointcut("execution(* *(java.io.Serializable))") //매칭 실패
